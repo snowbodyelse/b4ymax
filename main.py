@@ -467,6 +467,10 @@ async def on_message(message):
             reply = random.choice(outcome)
         
     # Handle pain rating continuation
+    elif command_body == "pain":
+    user_waiting_for_pain_rating[user_id] = True
+    reply = "🩺 Please rate your pain from **1 to 10**."
+
     if user_id in user_waiting_for_pain_rating:
         try:
             pain_level = int(command_body)
@@ -695,3 +699,4 @@ if not token:
     raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
 
 client.run(token)
+
