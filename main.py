@@ -687,4 +687,11 @@ async def on_error(event, *args, **kwargs):
 intents = discord.Intents.default()
 intents.message_content = True  # only if you need to read message content
 
-client.run(os.getenv("DISCORD_TOKEN"))                                                                                                                                                                                                     
+
+token = os.getenv("DISCORD_TOKEN")
+print("TOKEN DEBUG:", token)
+
+if not token:
+    raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
+
+client.run(token)
