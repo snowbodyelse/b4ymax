@@ -580,7 +580,7 @@ async def on_message(message):
 
         await message.channel.send("(●—●) Balalalala!")
 
-        source = FFmpegPCMAudio("balalala.mp3", executable=os.path.join(os.getcwd(), "./ffmpeg.exe"))
+        source = FFmpegPCMAudio("balalala.mp3", executable=os.path.join(os.getcwd(), "ffmpeg"))
         
         def after_playing(error):
             if error:
@@ -603,7 +603,7 @@ async def on_message(message):
         except discord.ClientException:
             vc = message.guild.voice_client  # Already connected
 
-        source = FFmpegPCMAudio("baymaxhello.mp3", executable=os.path.join(os.getcwd(), "./ffmpeg.exe"))
+        source = FFmpegPCMAudio("baymaxhello.mp3", executable=os.path.join(os.getcwd(), "ffmpeg"))
         
         def after_playing(error):
             if error:
@@ -699,5 +699,6 @@ if not token:
     raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
 
 client.run(token)
+
 
 
