@@ -639,7 +639,7 @@ async def on_message(message):
         await communicate.save(output_file)
 
             # Play in voice channel
-        audio = FFmpegPCMAudio(output_file, executable=os.path.join(os.getcwd(), "ffmpeg.exe"))
+        audio = FFmpegPCMAudio(output_file, executable="ffmpeg")
 
         def after_playing(error):
             if error:
