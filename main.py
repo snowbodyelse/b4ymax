@@ -357,8 +357,6 @@ async def on_message(message):
 
                 "`b!define <word>` - Get the definition of a word.\n"
 
-                "`b!pain` - Report your pain level.\n"
-
                 "`b!bye` - Say goodbye.\n"
 
                 "`b!8ball` - Ask a question and get a random answer.\n"
@@ -466,22 +464,6 @@ async def on_message(message):
 
             reply = random.choice(outcome)
         
-    # Handle pain rating continuation
-    elif command_body == "pain":
-        user_waiting_for_pain_rating[user_id] = True
-        reply = "🩺 Please rate your pain from **1 to 10**."
-
-    if user_id in user_waiting_for_pain_rating:
-        try:
-            pain_level = int(command_body)
-            if 1 <= pain_level <= 10:
-                reply = f"🩹 Acknowledged. Your pain level is {pain_level}. Please rest while I notify medical personnel."
-            else:
-                reply = f"⚠️ {pain_level}? That is beyond my scale. Please provide a number between 1 and 10."
-        except ValueError:
-            reply = random.choice(random_replies)
-        user_waiting_for_pain_rating.pop(user_id, None)
-    
     elif command_body.startswith("pokemon"):
         parts = command_body.split(maxsplit=1)
         if len(parts) > 1:
@@ -699,6 +681,7 @@ if not token:
     raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
 
 client.run(token)
+
 
 
 
