@@ -357,6 +357,8 @@ async def on_message(message):
 
                 "`b!define <word>` - Get the definition of a word.\n"
 
+                "`b!pain` - Report your pain level.\n"
+
                 "`b!bye` - Say goodbye.\n"
 
                 "`b!8ball` - Ask a question and get a random answer.\n"
@@ -464,203 +466,219 @@ async def on_message(message):
 
             reply = random.choice(outcome)
         
-        elif command_body.startswith("pokemon"):
-            parts = command_body.split(maxsplit=1)
-            if len(parts) > 1:
-                pokemon_name = parts[1].strip()
-                poke_info = await fetch_pokemon_info(pokemon_name)
-                if poke_info:
-                    embed = discord.Embed(
-                        title=f"🐾 {poke_info['name']} - Pokémon",
-                        description=poke_info["fact"],
-                        color=0x89f0ff
-                    )
-                    embed.set_thumbnail(url=poke_info["sprite"])
-                else:
-                    embed = discord.Embed(
-                        title="b4ymax (●—●) :",
-                        description=f"⚠️ I could not find information for **{pokemon_name}**.",
-                        color=0x89f0ff
-                    )
+    # Handle pain rating continuation
+    elif command_body == "pain":
+        user_waiting_for_pain_rating[user_id] = True
+        reply = "🩺 Please rate your pain from **1 to 10**."
+
+    if user_id in user_waiting_for_pain_rating:
+        try:
+            pain_level = int(command_body)
+            if 1 <= pain_level <= 10:
+                reply = f"🩹 Acknowledged. Your pain level is {pain_level}. Please rest while I notify medical personnel."
+            else:
+                reply = f"⚠️ {pain_level}? That is beyond my scale. Please provide a number between 1 and 10."
+        except ValueError:
+            reply = random.choice(random_replies)
+        user_waiting_for_pain_rating.pop(user_id, None)
+    
+    elif command_body.startswith("pokemon"):
+        parts = command_body.split(maxsplit=1)
+        if len(parts) > 1:
+            pokemon_name = parts[1].strip()
+            poke_info = await fetch_pokemon_info(pokemon_name)
+            if poke_info:
+                embed = discord.Embed(
+                    title=f"🐾 {poke_info['name']} - Pokémon",
+                    description=poke_info["fact"],
+                    color=0x89f0ff
+                )
+                embed.set_thumbnail(url=poke_info["sprite"])
             else:
                 embed = discord.Embed(
                     title="b4ymax (●—●) :",
-                    description="❓ Please provide a Pokémon name. Example: `pokemon pikachu`",
+                    description=f"⚠️ I could not find information for **{pokemon_name}**.",
                     color=0x89f0ff
                 )
-            await message.channel.send(embed=embed)
-            user_last_ping[user_id] = now
-            return
-
-        elif command_body == "news":
+        else:
             embed = discord.Embed(
-                title="📰 Fetching the latest news...",
+                title="b4ymax (●—●) :",
+                description="❓ Please provide a Pokémon name. Example: `pokemon pikachu`",
+                color=0x89f0ff
+            )
+        await message.channel.send(embed=embed)
+        user_last_ping[user_id] = now
+        return
+
+    elif command_body == "news":
+        embed = discord.Embed(
+            title="📰 Fetching the latest news...",
+            color=0x00bfff
+        )
+        await message.channel.send(embed=embed)
+        xml_text = await fetch_google_news()
+        if not xml_text:
+            await message.channel.send("⚠️ I could not fetch the news.")
+        else:
+            news_list = parse_news(xml_text)
+            news_embed = discord.Embed(
+                title="🗞️ Latest News from Google",
                 color=0x00bfff
             )
-            await message.channel.send(embed=embed)
-            xml_text = await fetch_google_news()
-            if not xml_text:
-                await message.channel.send("⚠️ I could not fetch the news.")
-            else:
-                news_list = parse_news(xml_text)
-                news_embed = discord.Embed(
-                    title="🗞️ Latest News from Google",
-                    color=0x00bfff
-                )
-                for title, link in news_list:
-                    news_embed.add_field(name=title, value=f"[Read more]({link})", inline=False)
-                news_embed.set_footer(text="Provided by Google News RSS")
-                await message.channel.send(embed=news_embed)
-            user_last_ping[user_id] = now
-            return
-    
-        elif command_body.startswith("define "):        
-            word = command_body[7:].strip()
-            if word:
-                looking_embed = discord.Embed(
-                    title=f"📖 Looking up definition for: **{word}**...",
-                    color=0x89f0ff
-                )
-                await message.channel.send(embed=looking_embed)
-                definition = await fetch_definition(word)
-                if definition:
-                    reply = f"The word **{word}** stands for:\n\n{definition}"
-                else:
-                    reply = f"⚠️ I could not find a definition for **{word}**."
-            else:
-                reply = "❓ Please provide a word to define. Example: `!define empathy`"
-    
-            elif command_body.startswith("health "):
-                condition = command_body[7:].strip()
-                advice = health_advice.get(condition)
-                if advice:
-                    embed = discord.Embed(
-                        title=f"(●—●) Health Advice: {condition.title()}",
-                        description=advice,
-                        color=0x89f0ff
-                )
-                else:
-                    embed = discord.Embed(
-                    title="b4ymax (●—●) :",
-                    description="❓ I don't have advice for that condition. Try: headache, cold, sore throat, flu, nausea, diarrhea, fever.",
-                    color=0x89f0ff
-            )
-            await message.channel.send(embed=embed)
-            user_last_ping[user_id] = now
-            return
+            for title, link in news_list:
+                news_embed.add_field(name=title, value=f"[Read more]({link})", inline=False)
+            news_embed.set_footer(text="Provided by Google News RSS")
+            await message.channel.send(embed=news_embed)
+        user_last_ping[user_id] = now
+        return
 
-        elif command_body == "balalalala":
-            if not message.author.voice:
-                await message.channel.send("❌ You need to be in a voice channel to use this command!")
-                return
-                
-            channel = message.author.voice.channel
-            try:
-                vc = await channel.connect()
-            except discord.ClientException:
-                vc = message.guild.voice_client  # Already connected
-    
-            await message.channel.send("(●—●) Balalalala!")
-    
-            source = FFmpegPCMAudio("balalala.mp3", executable="ffmpeg")
-            
-            def after_playing(error):
-                if error:
-                    print(f'Player error: {error}')
-                # Schedule disconnection on the event loop
-                asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
-    
-            vc.play(source, after=after_playing)
-            user_last_ping[user_id] = now
-            return
-    
-        elif command_body == "voice hello":
-            if not message.author.voice:
-                await message.channel.send("❌ You need to be in a voice channel to use this command!")
-                return
-                
-            channel = message.author.voice.channel
-            try:
-                vc = await channel.connect()
-            except discord.ClientException:
-                vc = message.guild.voice_client  # Already connected
-    
-            source = FFmpegPCMAudio("baymaxhello.mp3", executable="ffmpeg")
-            
-            def after_playing(error):
-                if error:
-                    print(f'Player error: {error}')
-                # Schedule disconnection on the event loop
-                asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
-    
-            vc.play(source, after=after_playing)
-            user_last_ping[user_id] = now
-            return
-    
-        elif command_body.startswith("say"):
-            if not message.author.voice:
-                await message.channel.send("❌ You need to be in a voice channel to use this command!")
-                return
-    
-            text = command_body[len("say "):].strip()
-            if not text:
-                await message.channel.send("🗣️ Please provide something for Baymax to say.")
-                return
-    
-            channel = message.author.voice.channel
-            try:
-                vc = await channel.connect()
-            except discord.ClientException:
-                vc = message.guild.voice_client  # Already connected
-    
-            await message.channel.send(f"(●—●) Speaking: \"{text}\"")
-    
-            # Generate TTS
-            output_file = "baymax.mp3"
-            communicate = edge_tts.Communicate(
-                    text, 
-                    voice="en-US-ChristopherNeural",    
-                    rate="-30%",
+    elif command_body.startswith("define "):        
+        word = command_body[7:].strip()
+        if word:
+            looking_embed = discord.Embed(
+                title=f"📖 Looking up definition for: **{word}**...",
+                color=0x89f0ff
             )
-            await communicate.save(output_file)
-    
-                # Play in voice channel
-            audio = FFmpegPCMAudio(output_file, executable="ffmpeg")
-    
-            def after_playing(error):
-                if error:
-                    print(f'Player error: {error}')
-                # Schedule disconnection on the event loop
-                asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
-    
-            vc.play(audio, after=after_playing)
-            user_last_ping[user_id] = now
-            return
-    
-    # Send final reply
-        embed = discord.Embed(
-    
-            title="b4ymax (●—●):",
-    
-            description=reply,
-    
+            await message.channel.send(embed=looking_embed)
+            definition = await fetch_definition(word)
+            if definition:
+                reply = f"The word **{word}** stands for:\n\n{definition}"
+            else:
+                reply = f"⚠️ I could not find a definition for **{word}**."
+        else:
+            reply = "❓ Please provide a word to define. Example: `!define empathy`"
+
+    elif command_body.startswith("health "):
+        condition = command_body[7:].strip()
+        advice = health_advice.get(condition)
+        if advice:
+            embed = discord.Embed(
+                title=f"(●—●) Health Advice: {condition.title()}",
+                description=advice,
+                color=0x89f0ff
+        )
+        else:
+            embed = discord.Embed(
+            title="b4ymax (●—●) :",
+            description="❓ I don't have advice for that condition. Try: headache, cold, sore throat, flu, nausea, diarrhea, fever.",
             color=0x89f0ff
         )
-
         await message.channel.send(embed=embed)
-    
         user_last_ping[user_id] = now
-    
-        if message.author.bot:
-    
+        return
+
+    elif command_body == "balalalala":
+        if not message.author.voice:
+            await message.channel.send("❌ You need to be in a voice channel to use this command!")
+            return
+            
+        channel = message.author.voice.channel
+        try:
+            vc = await channel.connect()
+        except discord.ClientException:
+            vc = message.guild.voice_client  # Already connected
+
+        await message.channel.send("(●—●) Balalalala!")
+
+        source = FFmpegPCMAudio("balalala.mp3", executable="ffmpeg")
+        
+        def after_playing(error):
+            if error:
+                print(f'Player error: {error}')
+            # Schedule disconnection on the event loop
+            asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
+
+        vc.play(source, after=after_playing)
+        user_last_ping[user_id] = now
+        return
+
+    elif command_body == "voice hello":
+        if not message.author.voice:
+            await message.channel.send("❌ You need to be in a voice channel to use this command!")
+            return
+            
+        channel = message.author.voice.channel
+        try:
+            vc = await channel.connect()
+        except discord.ClientException:
+            vc = message.guild.voice_client  # Already connected
+
+        source = FFmpegPCMAudio("baymaxhello.mp3", executable="ffmpeg")
+        
+        def after_playing(error):
+            if error:
+                print(f'Player error: {error}')
+            # Schedule disconnection on the event loop
+            asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
+
+        vc.play(source, after=after_playing)
+        user_last_ping[user_id] = now
+        return
+
+    elif command_body.startswith("say"):
+        if not message.author.voice:
+            await message.channel.send("❌ You need to be in a voice channel to use this command!")
             return
 
-        content = message.content.strip().lower()
-    
-        # Cooldown
-        last_ping = user_last_ping.get(user_id, 0)
-        if now - last_ping < 2:
+        text = command_body[len("say "):].strip()
+        if not text:
+            await message.channel.send("🗣️ Please provide something for Baymax to say.")
             return
+
+        channel = message.author.voice.channel
+        try:
+            vc = await channel.connect()
+        except discord.ClientException:
+            vc = message.guild.voice_client  # Already connected
+
+        await message.channel.send(f"(●—●) Speaking: \"{text}\"")
+
+        # Generate TTS
+        output_file = "baymax.mp3"
+        communicate = edge_tts.Communicate(
+                text, 
+                voice="en-US-ChristopherNeural",    
+                rate="-30%",
+        )
+        await communicate.save(output_file)
+
+            # Play in voice channel
+        audio = FFmpegPCMAudio(output_file, executable="ffmpeg")
+
+        def after_playing(error):
+            if error:
+                print(f'Player error: {error}')
+            # Schedule disconnection on the event loop
+            asyncio.run_coroutine_threadsafe(vc.disconnect(), client.loop)
+
+        vc.play(audio, after=after_playing)
+        user_last_ping[user_id] = now
+        return
+    
+    # Send final reply
+    embed = discord.Embed(
+
+        title="b4ymax (●—●):",
+
+        description=reply,
+
+        color=0x89f0ff
+    )
+
+    await message.channel.send(embed=embed)
+
+    user_last_ping[user_id] = now
+
+    if message.author.bot:
+
+        return
+
+    content = message.content.strip().lower()
+
+    # Cooldown
+    last_ping = user_last_ping.get(user_id, 0)
+    if now - last_ping < 2:
+        return
 
 # Add error logging
 @client.event
@@ -681,7 +699,6 @@ if not token:
     raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
 
 client.run(token)
-
 
 
 
