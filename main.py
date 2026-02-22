@@ -464,9 +464,9 @@ async def on_message(message):
 
             reply = random.choice(outcome)
         
-    elif command_body.startswith("pokemon"):
-        parts = command_body.split(maxsplit=1)
-        if len(parts) > 1:
+        elif command_body.startswith("pokemon"):
+            parts = command_body.split(maxsplit=1)
+            if len(parts) > 1:
             pokemon_name = parts[1].strip()
             poke_info = await fetch_pokemon_info(pokemon_name)
             if poke_info:
@@ -482,17 +482,17 @@ async def on_message(message):
                     description=f"⚠️ I could not find information for **{pokemon_name}**.",
                     color=0x89f0ff
                 )
-        else:
-            embed = discord.Embed(
-                title="b4ymax (●—●) :",
-                description="❓ Please provide a Pokémon name. Example: `pokemon pikachu`",
-                color=0x89f0ff
-            )
-        await message.channel.send(embed=embed)
-        user_last_ping[user_id] = now
-        return
+            else:
+                embed = discord.Embed(
+                    title="b4ymax (●—●) :",
+                    description="❓ Please provide a Pokémon name. Example: `pokemon pikachu`",
+                    color=0x89f0ff
+                )
+            await message.channel.send(embed=embed)
+            user_last_ping[user_id] = now
+            return
 
-    elif command_body == "news":
+        elif command_body == "news":
         embed = discord.Embed(
             title="📰 Fetching the latest news...",
             color=0x00bfff
@@ -514,7 +514,7 @@ async def on_message(message):
         user_last_ping[user_id] = now
         return
 
-    elif command_body.startswith("define "):        
+        elif command_body.startswith("define "):        
         word = command_body[7:].strip()
         if word:
             looking_embed = discord.Embed(
@@ -530,7 +530,7 @@ async def on_message(message):
         else:
             reply = "❓ Please provide a word to define. Example: `!define empathy`"
 
-    elif command_body.startswith("health "):
+        elif command_body.startswith("health "):
         condition = command_body[7:].strip()
         advice = health_advice.get(condition)
         if advice:
@@ -549,10 +549,10 @@ async def on_message(message):
         user_last_ping[user_id] = now
         return
 
-    elif command_body == "balalalala":
-        if not message.author.voice:
-            await message.channel.send("❌ You need to be in a voice channel to use this command!")
-            return
+        elif command_body == "balalalala":
+            if not message.author.voice:
+                await message.channel.send("❌ You need to be in a voice channel to use this command!")
+                return
             
         channel = message.author.voice.channel
         try:
@@ -574,9 +574,9 @@ async def on_message(message):
         user_last_ping[user_id] = now
         return
 
-    elif command_body == "voice hello":
-        if not message.author.voice:
-            await message.channel.send("❌ You need to be in a voice channel to use this command!")
+        elif command_body == "voice hello":
+            if not message.author.voice:
+                await message.channel.send("❌ You need to be in a voice channel to use this command!")
             return
             
         channel = message.author.voice.channel
@@ -597,35 +597,35 @@ async def on_message(message):
         user_last_ping[user_id] = now
         return
 
-    elif command_body.startswith("say"):
-        if not message.author.voice:
-            await message.channel.send("❌ You need to be in a voice channel to use this command!")
-            return
+        elif command_body.startswith("say"):
+            if not message.author.voice:
+                await message.channel.send("❌ You need to be in a voice channel to use this command!")
+                return
 
-        text = command_body[len("say "):].strip()
-        if not text:
-            await message.channel.send("🗣️ Please provide something for Baymax to say.")
-            return
+            text = command_body[len("say "):].strip()
+            if not text:
+                await message.channel.send("🗣️ Please provide something for Baymax to say.")
+                return
 
-        channel = message.author.voice.channel
-        try:
-            vc = await channel.connect()
-        except discord.ClientException:
-            vc = message.guild.voice_client  # Already connected
+            channel = message.author.voice.channel
+            try:
+                vc = await channel.connect()
+            except discord.ClientException:
+                vc = message.guild.voice_client  # Already connected
 
-        await message.channel.send(f"(●—●) Speaking: \"{text}\"")
+            await message.channel.send(f"(●—●) Speaking: \"{text}\"")
 
         # Generate TTS
-        output_file = "baymax.mp3"
-        communicate = edge_tts.Communicate(
-                text, 
-                voice="en-US-ChristopherNeural",    
-                rate="-30%",
+            output_file = "baymax.mp3"
+            communicate = edge_tts.Communicate(
+                    text, 
+                    voice="en-US-ChristopherNeural",    
+                    rate="-30%",
         )
-        await communicate.save(output_file)
+            await communicate.save(output_file)
 
             # Play in voice channel
-        audio = FFmpegPCMAudio(output_file, executable="ffmpeg")
+            audio = FFmpegPCMAudio(output_file, executable="ffmpeg")
 
         def after_playing(error):
             if error:
@@ -681,6 +681,7 @@ if not token:
     raise RuntimeError("DISCORD_TOKEN environment variable is missing!")
 
 client.run(token)
+
 
 
 
