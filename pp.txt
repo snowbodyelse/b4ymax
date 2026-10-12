@@ -1,14 +1,22 @@
-Privacy Policy for b4ymax
+Privacy Policy for burg3r
 
-This Privacy Policy governs the collection, use, and sharing of personal information by b4ymax, a Discord bot developed by snow1ng. By using b4ymax, you agree to the terms of this Privacy Policy.
+This Privacy Policy governs the collection, use, and sharing of personal information by burg3r, a Discord bot developed by snow1ng. By using burg3r, you agree to the terms of this Privacy Policy.
 
 Information We Collect
 
-We collect information that you provide to us through your use of the bot, such as your Discord user ID and username, server and channel information, and message content. We may also collect usage data, such as the frequency and duration of your use of the bot.
+The bot reads messages that start with its prefix (b!), that mention it, or that are sent to it in a direct message, so it can run your commands. It also receives your Discord user ID, username, and the server and channel the command was used in. It does not store the content of your messages, except where a command asks you to save text (for example, your profile bio).
+
+To make the economy, games, and profile features work, we store the following against your Discord user ID: your balance and all-time-high balance, daily claim history, time zone, profile colour and banner, profile bio, badges you own and choose to show, cards you collect, and your trivia progress.
+
+The bot may also keep the IDs of the servers and channels where an admin has set up card drops.
 
 How We Use Your Information
 
-We use your information to operate and improve b4ymax, including to provide support and respond to your requests. We may also use your information to develop new features or services, to conduct research and analytics, and to comply with legal obligations.
+We use this information only to operate and improve burg3r: to run commands, keep your balance, items, and profile between sessions, show leaderboards and profiles, and prevent abuse. We may also use it to develop new features and to comply with legal obligations. Your user ID, display name, balance, badges, and bio can be seen by other users through commands such as b!profile, b!balance, b!leaderboard, and b!badges.
+
+Third-Party Services
+
+To answer some commands, the bot sends requests to outside services: news headlines (Google News), word definitions (Datamuse and dictionaryapi.dev), and trivia questions (Open Trivia Database). Only the text needed for the request, such as the word you ask to define, is sent. No Discord user information is sent to these services. The bot also runs on Discord, which handles your data under its own privacy policy.
 
 Sharing Your Information
 
@@ -16,20 +24,24 @@ We do not sell or share your personal information with third parties. However, w
 
 Data Retention
 
-We retain your information for as long as necessary to provide b4ymax’s services or as required by law. We will delete your information upon your request or when it is no longer needed.
+We retain your information for as long as necessary to provide burg3r's services or as required by law. You can ask us to delete your stored data (balance, items, profile, and progress) at any time, and we will delete it when it is no longer needed.
 
 Data Security
 
 We take reasonable measures to protect your information from unauthorized access, alteration, or destruction. However, no security measure is perfect, and we cannot guarantee the security of your information.
 
+Children
+
+burg3r is meant for people who are old enough to use Discord under Discord's Terms of Service. We do not knowingly collect information from anyone under that age.
+
 Changes to this Policy
 
-We may update this Privacy Policy from time to time, and we will post the updated policy on our website. Your continued use of b4ymax after we make changes to this policy indicates your acceptance of the revised policy.
+We may update this Privacy Policy from time to time, and we will post the updated policy on our website. Your continued use of burg3r after we make changes to this policy indicates your acceptance of the revised policy.
 
 Contact Us
 
-If you have any questions or concerns about this Privacy Policy, please contact us at snowbodyelse@gmail.com.
+If you have any questions or concerns about this Privacy Policy, or want your data deleted, please contact us at snowbodyelse@gmail.com.
 
 Effective Date
 
-This Privacy Policy is effective as of 11/02/2026.
+This Privacy Policy is effective as of 12 October 2026.
