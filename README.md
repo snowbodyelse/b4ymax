@@ -1,2 +1,2 @@
-# b4ymax
-discord bot
+# burg3r
+basic discord bot for community servers
